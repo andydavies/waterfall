@@ -12,16 +12,17 @@ Just add the bookmarklet below to your bookmarks bar.
 
 IE 10, Chromium Nightly
 
-*When I say 'works in' I mean you'll get a waterfall but sometimes there are odd things about it!
+*When I say 'works in' I mean you'll get a waterfall but sometimes there will be odd things about it!
 
 #To Do
 
 - Add DOM event markers e.g. onload etc.
 - Add AppCache, SSL times, fix TCP times
 - Truncate URLs
-- Fix blocked
+- Fix blocked timings
 - Cleanup and refactor drawing code
-- Check if bookmarklet script loaded before 
+- Check if bookmarklet script loaded before adding it
+- Add iframe support
 
 #To check
 
