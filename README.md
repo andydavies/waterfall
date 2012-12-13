@@ -2,9 +2,9 @@
 
 A bookmarklet to create page load waterfall in the browser using the Resource Timing API
 
-To use, create a bookmark with the script below in, load a page, click the bookmark
+Just add the bookmarklet below to your bookmarks bar.
 
- javascript:(function(){var el=document.createElement('script');el.type='text/javascript';el.src='https://raw.github.com/andydavies/waterfall.js';document.getElementsByTagName('body')[0].appendChild(el);})();
+<a href="javascript:(function(){var el=document.createElement('script');el.type='text/javascript';el.src='https://raw.github.com/andydavies/waterfall.js';document.getElementsByTagName('body')[0].appendChild(el);})();">Waterfall Bookmarklet<a/>
 
 
 #Works In*
