@@ -4,7 +4,7 @@ A bookmarklet to create page load waterfall in the browser using the Resource Ti
 
 Just add the bookmarklet below to your bookmarks bar.
 
-[Waterfall Bookmarklet](<a href="javascript:(function(){var el=document.createElement('script');el.type='text/javascript';el.src='https://raw.github.com/andydavies/waterfall.js';document.getElementsByTagName('body')[0].appendChild(el);})();">)
+<a href="javascript:(function(){var el=document.createElement('script');el.type='text/javascript';el.src='https://raw.github.com/andydavies/waterfall.js';document.getElementsByTagName('body')[0].appendChild(el);})();">
 
 
 #Works In*
