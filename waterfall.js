@@ -58,7 +58,7 @@
 			dnsStart: timing.domainLookupStart - timing.navigationStart,
 			dnsDuration: timing.domainLookupEnd - timing.domainLookupStart,
 			tcpStart: timing.connectStart - timing.navigationStart,
-			tcpDuration: timing.requestStart - timing.navigationStart,	// TODO
+			tcpDuration: timing.connectEnd - timing.connectStart,		// TODO
 			sslStart: 0,												// TODO
 			sslDuration: 0,												// TODO
 			requestStart: timing.requestStart - timing.navigationStart,
@@ -157,7 +157,7 @@
 // TODO: Truncate long URLs
 			g.appendChild(createSVGText(5, 0, 0, rowHeight, "font: 10px sans-serif;", "start", shortenURL(entry.url)));
 
-// TODO: Test for 3rd party!!! Use fetchStart == 0?
+// TODO: Test for 3rd party!!! 
 
 			g.appendChild(createSVGRect(barOffset + entry.start / scaleFactor, 0, entry.duration / scaleFactor, rowHeight, "fill: rgb(204, 204, 204)"));
 
