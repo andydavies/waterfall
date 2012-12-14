@@ -18,17 +18,20 @@ IE 10, Chromium Nightly
 
 - Add DOM event markers e.g. onload etc.
 - Add AppCache, SSL times, fix TCP times
-- Truncate URLs
+- ~~Truncate URL display~~
+- Remove protocol from URL display
 - Fix blocked timings
 - Cleanup and refactor drawing code
 - Check if bookmarklet script loaded before adding it
 - Add iframe support
+- Add tooltip with full URL and timing details
+- Add row number?
 
 #To check
 
-- Are dataURIs supposed to be in list of resources?
+- Are dataURIs supposed to be in list of resources? - no
 - Chromium's TCP connect timings
 - responseEnd == 0 in Chromium
 - Why is the API sometimes unavailable in IE10?
-- "about:blank" in IE10 on http://t.uk.msn.com/
+- "about:blank" in IE10 on http://t.uk.msn.com/ - valid
 

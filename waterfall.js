@@ -20,11 +20,9 @@
 		var entries = [];
 	
 		// Page times come from Navigation Timing API
-
 	  	entries.push(createEntryFromNavigationTiming());
 
 		// Other entries come from Resource Timing API
-
 		var resources = [];
 		
 		if(window.performance.getEntriesByType !== undefined) {
@@ -34,7 +32,7 @@
 			resources = window.performance.webkitGetEntriesByType("resource");
 		}
 		
-// TODO .length - 1 is a really hacky way of removing the bookmarklet script
+// TODO: .length - 1 is a really hacky way of removing the bookmarklet script
 // Do it by name???
 		for(var n = 0; n < resources.length - 1; n++) {
 			entries.push(createEntryFromResourceTiming(resources[n]));
@@ -47,8 +45,7 @@
 
 		var timing = window.performance.timing;
 
-// TODO - Clean this up
-// Add fetchStart and duration, fix SSL etc. timings
+// TODO: Add fetchStart and duration, fix TCP, SSL etc. timings
 
 		return {
 			url: document.location.href,
@@ -73,9 +70,7 @@
 
 	function createEntryFromResourceTiming(resource) {
 
-// TODO: Clean up! what's impact of CORS on this code?
-// Add fetchStart and duration, fix SSL etc. timings
-
+// TODO: Add fetchStart and duration, fix TCP, SSL timings
 // NB
 // AppCache: start = fetchStart, end = domainLookupStart, connectStart or requestStart
 // TCP: start = connectStart, end = secureConnectionStart or connectEnd
@@ -136,8 +131,9 @@
 
 		var svg = createSVG(width, height);
 
-		// scale - when to switch from seconds to milliseconds 
-		var scaleFactor = maxTime / (width - barOffset);
+		// scale
+		// TO DO - When to switch from seconds to milliseconds ???
+		var scaleFactor = maxTime / (width - 5 - barOffset);
 
 		// draw axis
 		var interval = 1000 / scaleFactor;
@@ -158,10 +154,10 @@
 			var entry = entries[n]; 
 			var g = createSVGGroup("translate(0," + (n + 1) * (rowHeight + rowPadding) + ")");
 
-// TODO truncate long URLs
-			g.appendChild(createSVGText(0, 0, 0, rowHeight, "font: 10px sans-serif;", "start", entry.url));
+// TODO: Truncate long URLs
+			g.appendChild(createSVGText(5, 0, 0, rowHeight, "font: 10px sans-serif;", "start", shortenURL(entry.url)));
 
-// TODO test for 3rd party!!! Use fetchStart == 0?
+// TODO: Test for 3rd party!!! Use fetchStart == 0?
 
 			g.appendChild(createSVGRect(barOffset + entry.start / scaleFactor, 0, entry.duration / scaleFactor, rowHeight, "fill: rgb(204, 204, 204)"));
 
@@ -200,6 +196,18 @@
 		container.appendChild(svg);
 	}
 
+//TODO: Remove protocol
+	function shortenURL(url) {
+		// Strip off any query string and fragment
+		var strippedURL = url.match("[^?#]*")
+
+		var shorterURL = strippedURL[0];
+		if(shorterURL.length > 40) {
+			shorterURL = shorterURL.slice(0, 25) + " ... " + shorterURL.slice(-10);
+		}
+
+		return shorterURL;
+	}
 
 	function createSVG(width, height) {
 		var el = document.createElementNS(xmlns, "svg");
