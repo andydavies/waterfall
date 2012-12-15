@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Waterfall by andydavies</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/andydavies/waterfall">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/andydavies/waterfall/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/andydavies/waterfall/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Waterfall</h1>
+          <p>Bookmarklet that produces Page Load Waterfalls using the Resource Timing API</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/andydavies">andydavies</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>Waterfall</h1>
+
+<p>A bookmarklet to create page load waterfall in the browser using the Resource Timing API</p>
+
+<p>Just add the bookmarklet below to your bookmarks bar.</p>
+
+<pre><code>&lt;a href="javascript:(function(){var el=document.createElement('script');el.type='text/javascript';el.src='https://raw.github.com/andydavies/waterfall/master/waterfall.js';document.getElementsByTagName('body')[0].appendChild(el);})();"&gt;
+</code></pre>
+
+<h1>Works In*</h1>
+
+<p>IE 10, Chromium Nightly</p>
+
+<p>*When I say 'works in' I mean you'll get a waterfall but sometimes there will be odd things about it!</p>
+
+<h1>To Do</h1>
+
+<ul>
+<li>Add DOM event markers e.g. onload etc.</li>
+<li>Add AppCache, SSL times, fix TCP times</li>
+<li><del>Truncate URL display</del></li>
+<li>Remove protocol from URL display</li>
+<li>Fix blocked timings</li>
+<li>Display blocked / active times for 3rd party resources</li>
+<li>Check if bookmarklet script loaded before adding it</li>
+<li>Add iframe support</li>
+<li>Add tooltip with full URL and timing details</li>
+<li>Add row number?</li>
+<li>Add legend</li>
+<li>Cleanup and refactor drawing code</li>
+<li>Add Close button</li>
+<li>Add Jdrop / HAR Storage links</li>
+<li>Flexible width?</li>
+</ul><h1>To check</h1>
+
+<ul>
+<li>Are dataURIs supposed to be in list of resources? - no</li>
+<li>Chromium's TCP connect timings</li>
+<li>responseEnd == 0 in Chromium for 3rd party resources</li>
+<li>Why is the API sometimes unavailable in IE10?</li>
+<li>"about:blank" in IE10 on <a href="http://t.uk.msn.com/">http://t.uk.msn.com/</a> - valid</li>
+</ul>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
