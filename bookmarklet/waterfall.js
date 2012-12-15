@@ -8,7 +8,7 @@
  *
  * To use, create a bookmark with the script below in, load a page, click the bookmark
  *
- * javascript:(function(){var el=document.createElement('script');el.type='text/javascript';el.src='https://raw.github.com/andydavies/waterfall.js';document.getElementsByTagName('body')[0].appendChild(el);})();
+ * javascript:(function(){var el=document.createElement('script');el.type='text/javascript';el.src='http://andydavies.github.com/waterfall/bookmarklet/waterfall.js';document.getElementsByTagName('body')[0].appendChild(el);})();
  */
 
 (function waterfall() {
