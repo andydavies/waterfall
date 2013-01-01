@@ -8,13 +8,29 @@
  *
  * To use, create a bookmark with the script below in, load a page, click the bookmark
  *
- * javascript:(function(){var el=document.createElement('script');el.type='text/javascript';el.src='http://andydavies.github.com/waterfall/bookmarklet/waterfall.js';document.getElementsByTagName('body')[0].appendChild(el);})();
+ * javascript:(function(){var el=document.createElement('script');el.type='text/javascript';el.src='http://andydavies.me/sandbox/waterfall.js';document.getElementsByTagName('body')[0].appendChild(el);})();
  */
 
 (function waterfall() {
 
 	var xmlns = "http://www.w3.org/2000/svg";
 
+	var barColors = {
+		blocked: "rgb(204, 204, 204)",
+		thirdParty: "rgb(0, 0, 0)",
+		redirect: "rgb(255, 221, 0)",
+		appCache: "rgb(161, 103, 38)",
+		dns: "rgb(48, 150, 158)",
+		tcp: "rgb(255, 157, 66)",
+		ssl: "rgb(213,102, 223)",
+		request: "rgb(64, 255, 64)",
+		response: "rgb(52, 150, 255)"
+	}
+
+	/**
+     * Creates array of timing entries from Navigation and Resource Timing Interfaces
+     * @returns {object[]}
+     */
 	function getTimings() {
 
 		var entries = [];
@@ -41,6 +57,11 @@
 		return entries;
 	}
 
+	/**
+     * Creates an entry from a PerformanceResourceTiming object 
+     * @param {object} resource
+     * @returns {object}
+     */
 	function createEntryFromNavigationTiming() {
 
 		var timing = window.performance.timing;
@@ -68,6 +89,11 @@
   		}
 	}
 
+	/**
+     * Creates an entry from a PerformanceResourceTiming object 
+     * @param {object} resource
+     * @returns {object}
+	 */
 	function createEntryFromResourceTiming(resource) {
 
 // TODO: Add fetchStart and duration, fix TCP, SSL timings
@@ -98,6 +124,10 @@
   		}
 	}
 
+	/**
+     * Draw waterfall
+     * @param {object[]} entries
+     */
 	function drawWaterfall(entries) {
 	
 		var maxTime = 0;
@@ -152,51 +182,82 @@
 		for(var n = 0; n < entries.length; n++) {
 
 			var entry = entries[n]; 
-			var g = createSVGGroup("translate(0," + (n + 1) * (rowHeight + rowPadding) + ")");
 
-// TODO: Truncate long URLs
-			g.appendChild(createSVGText(5, 0, 0, rowHeight, "font: 10px sans-serif;", "start", shortenURL(entry.url)));
+			var row = createSVGGroup("translate(0," + (n + 1) * (rowHeight + rowPadding) + ")");
 
-// TODO: Test for 3rd party!!! 
+			row.appendChild(createSVGText(5, 0, 0, rowHeight, "font: 10px sans-serif;", "start", shortenURL(entry.url)));
 
-			g.appendChild(createSVGRect(barOffset + entry.start / scaleFactor, 0, entry.duration / scaleFactor, rowHeight, "fill: rgb(204, 204, 204)"));
+			row.appendChild(drawBar(entry, barOffset, rowHeight, scaleFactor));
 
-			if(entry.redirectDuration > 0) {
-				g.appendChild(createSVGRect(barOffset + entry.redirectStart / scaleFactor , 0, entry.redirectDuration / scaleFactor, rowHeight, "fill: rgb(255, 221, 0)"));
-			}
-
-			if(entry.appCacheDuration > 0) {
-				g.appendChild(createSVGRect(barOffset + entry.appCacheStart / scaleFactor , 0, entry.appCacheDuration / scaleFactor, rowHeight, "fill: rgb(161, 103, 38)"));
-			}
-
-			if(entry.dnsDuration > 0) {
-				g.appendChild(createSVGRect(barOffset + entry.dnsStart / scaleFactor , 0, entry.dnsDuration / scaleFactor, rowHeight, "fill: rgb(48, 150, 158)"));
-			}
-
-			if(entry.tcpDuration > 0) {
-				g.appendChild(createSVGRect(barOffset + entry.tcpStart / scaleFactor , 0, entry.tcpDuration / scaleFactor, rowHeight, "fill: rgb(255, 157, 66)"));
-			}
-
-			if(entry.sslDuration > 0) {
-				g.appendChild(createSVGRect(barOffset + entry.sslStart / scaleFactor , 0, entry.sslDuration / scaleFactor, rowHeight, "fill: rgb(213,102, 223)"));
-			}
-
-			if(entry.requestDuration > 0) {
-				g.appendChild(createSVGRect(barOffset + entry.requestStart / scaleFactor , 0, entry.requestDuration / scaleFactor, rowHeight, "fill: rgb(64, 255, 64)"));
-			}
-
-			if(entry.responseDuration > 0) {
-				g.appendChild(createSVGRect(barOffset + entry.responseStart / scaleFactor , 0, entry.responseDuration / scaleFactor, rowHeight, "fill: rgb(52,150,255)"));
-			}
-
-			svg.appendChild(g);
+			svg.appendChild(row);
 //			console.log(JSON.stringify(entry) + "\n" );
 		}
 
 		container.appendChild(svg);
 	}
 
-//TODO: Remove protocol
+// TODO: Split out row, bar and axis drawing
+// drawAxis
+// drawRow()
+
+	/**
+     * Draw bar for resource 
+     * @param {object} entry Details of URL, and timings for individual resource
+     * @param {int} barOffset Offset of the start of the bar along  x axis
+     * @param {int} rowHeight 
+     * @param {double} scaleFactor Factor used to scale down chart elements
+     * @returns {element} SVG Group element containing bar
+     *
+     * TODO: Scale bar using SVG transform? - any accuracy issues?
+     */
+	function drawBar(entry, barOffset, rowHeight, scaleFactor) {
+
+		var bar = createSVGGroup("translate(" + barOffset + ", 0)");
+
+		bar.appendChild(createSVGRect(entry.start / scaleFactor, 0, entry.duration / scaleFactor, rowHeight, "fill:" + barColors.blocked));
+
+// TODO: Test for 3rd party and colour appropriately
+
+		if(entry.redirectDuration > 0) {
+			bar.appendChild(createSVGRect(entry.redirectStart / scaleFactor , 0, entry.redirectDuration / scaleFactor, rowHeight, "fill:" + barColors.redirect));
+		}
+
+		if(entry.appCacheDuration > 0) {
+			bar.appendChild(createSVGRect(entry.appCacheStart / scaleFactor , 0, entry.appCacheDuration / scaleFactor, rowHeight, "fill:" + barColors.appCache));
+		}
+
+		if(entry.dnsDuration > 0) {
+			bar.appendChild(createSVGRect(entry.dnsStart / scaleFactor , 0, entry.dnsDuration / scaleFactor, rowHeight, "fill:" + barColors.dns));
+		}
+
+		if(entry.tcpDuration > 0) {
+			bar.appendChild(createSVGRect(entry.tcpStart / scaleFactor , 0, entry.tcpDuration / scaleFactor, rowHeight, "fill:" + barColors.tcp));
+		}
+
+		if(entry.sslDuration > 0) {
+			bar.appendChild(createSVGRect(entry.sslStart / scaleFactor , 0, entry.sslDuration / scaleFactor, rowHeight, "fill:" + barColors.ssl));
+		}
+
+		if(entry.requestDuration > 0) {
+			bar.appendChild(createSVGRect(entry.requestStart / scaleFactor , 0, entry.requestDuration / scaleFactor, rowHeight, "fill:" + barColors.request));
+		}
+
+		if(entry.responseDuration > 0) {
+			bar.appendChild(createSVGRect(entry.responseStart / scaleFactor , 0, entry.responseDuration / scaleFactor, rowHeight, "fill:" + barColors.response));
+		}
+
+		return bar;
+	}
+
+// drawBarSegment - start, length, height, fill
+
+	/**
+     * Shorten URLs over 40 characters
+     * @param {string} url URL to be shortened
+     * @returns {string} Truncated URL
+     *
+     * TODO: Remove protocol
+     */
 	function shortenURL(url) {
 		// Strip off any query string and fragment
 		var strippedURL = url.match("[^?#]*")
@@ -209,6 +270,12 @@
 		return shorterURL;
 	}
 
+	/**
+     * Create SVG element
+     * @param {int} width
+     * @param {int} height
+     * @returns {element} SVG element
+     */
 	function createSVG(width, height) {
 		var el = document.createElementNS(xmlns, "svg");
  
@@ -218,6 +285,11 @@
 		return el;
 	}
 
+	/**
+     * Create SVG Group element
+     * @param {string} transform SVG tranformation to apply to group element
+     * @returns {element} SVG Group element
+     */
 	function createSVGGroup(transform) {		
 		var el = document.createElementNS(xmlns, "g");
  
@@ -226,6 +298,15 @@
 		return el;
 	}
 
+	/**
+     * Create SVG Rect element
+     * @param {int} x
+     * @param {int} y
+     * @param {int} width
+     * @param {int} height
+     * @param {string} style
+     * @returns {element} SVG Rect element
+     */
 	function createSVGRect(x, y, width, height, style) {
 		var el = document.createElementNS(xmlns, "rect");
  
@@ -238,6 +319,15 @@
 		return el;
 	}
 
+	/**
+     * Create SVG Rect element
+     * @param {int} x1
+     * @param {int} y1
+     * @param {int} x2
+     * @param {int} y2
+     * @param {string} style
+     * @returns {element} SVG Line element
+     */
 	function createSVGLine(x1, y1, x2, y2, style) {
 		var el = document.createElementNS(xmlns, "line");
 
@@ -250,6 +340,17 @@
   		return el;
 	}
 
+	/**
+     * Create SVG Text element
+     * @param {int} x
+     * @param {int} y
+     * @param {int} dx
+     * @param {int} dy
+     * @param {string} style
+     * @param {string} anchor
+     * @param {string} text
+     * @returns {element} SVG Text element
+     */
 	function createSVGText(x, y, dx, dy, style, anchor, text) {
 		var el = document.createElementNS(xmlns, "text");
 

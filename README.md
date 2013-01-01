@@ -62,4 +62,6 @@ Some of these issues are already marked as fixed on [crbug.com](http://crbug.com
 - Frequently domainLookupStart == domainLookupEnd even for domains the Windows VM has never seen previously.
 - responseStart == responseEnd in Navigation Timing for both first and repeat views even when waterfall in dev tools shows a response
 
+##Change Log
 
+2013-01-01 Add JSDoc comments, start re-factoring drawing code
