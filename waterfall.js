@@ -69,7 +69,7 @@
 // TODO: Add fetchStart and duration, fix TCP, SSL etc. timings
 
 		return {
-			url: document.location.href,
+			url: document.URL,
 			start: 0,
 			duration: timing.responseEnd - timing.navigationStart,
 			redirectStart: timing.redirectStart === 0 ? 0 : timing.redirectStart - timing.navigationStart,
