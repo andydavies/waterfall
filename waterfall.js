@@ -155,7 +155,7 @@
 		//calculate size of chart
 		// - max time
 		// - number of entries
-		var width = 1000;
+		var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
 		var height = (entries.length + 1) * (rowHeight + rowPadding); // +1 for axis
 
 		container.width = width;
