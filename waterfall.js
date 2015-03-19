@@ -11,7 +11,7 @@
  * javascript:(function(){var el=document.createElement('script');el.type='text/javascript';el.src='http://andydavies.me/sandbox/waterfall.js';document.getElementsByTagName('body')[0].appendChild(el);})();
  */
 
-(function waterfall() {
+(function waterfall(w,d) {
 
 	var xmlns = "http://www.w3.org/2000/svg";
 
@@ -41,11 +41,11 @@
 		// Other entries come from Resource Timing API
 		var resources = [];
 		
-		if(window.performance.getEntriesByType !== undefined) {
-			resources = window.performance.getEntriesByType("resource");
+		if(w.performance.getEntriesByType !== undefined) {
+			resources = w.performance.getEntriesByType("resource");
 		}
-		else if(window.performance.webkitGetEntriesByType !== undefined) {
-			resources = window.performance.webkitGetEntriesByType("resource");
+		else if(w.performance.webkitGetEntriesByType !== undefined) {
+			resources = w.performance.webkitGetEntriesByType("resource");
 		}
 		
 // TODO: .length - 1 is a really hacky way of removing the bookmarklet script
@@ -64,12 +64,12 @@
      */
 	function createEntryFromNavigationTiming() {
 
-		var timing = window.performance.timing;
+		var timing = w.performance.timing;
 
 // TODO: Add fetchStart and duration, fix TCP, SSL etc. timings
 
 		return {
-			url: document.URL,
+			url: d.URL,
 			start: 0,
 			duration: timing.responseEnd - timing.navigationStart,
 			redirectStart: timing.redirectStart === 0 ? 0 : timing.redirectStart - timing.navigationStart,
@@ -135,16 +135,18 @@
 			maxTime = Math.max(maxTime, entries[n].start + entries[n].duration);
 		}
 
-		var containerID= "waterfall-div";
-		var container = document.getElementById(containerID);
+		var containerID= "waterfall-div",
+			container = d.getElementById(containerID),
+			closeBtn = createCloseBtn();
 
 		if (container === null) {
-			container = document.createElement('div');
+			container = d.createElement('div');
 			container.id = containerID;
 		}
 
 		container.style.cssText = 'background:#fff;border: 2px solid #000;margin:5px;position:absolute;top:0px;left:0px;z-index:99999;margin:0px;padding:0px;';
-		document.body.appendChild(container);
+		container.appendChild(closeBtn);
+		d.body.appendChild(container);
 
 		var rowHeight = 10;
 		var rowPadding = 2;
@@ -153,7 +155,7 @@
 		//calculate size of chart
 		// - max time
 		// - number of entries
-		var width = 1000;
+		var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
 		var height = (entries.length + 1) * (rowHeight + rowPadding); // +1 for axis
 
 		container.width = width;
@@ -271,13 +273,25 @@
 	}
 
 	/**
+	*Create Close Button
+	* returns {element} span element
+	*/
+	function createCloseBtn(){
+		var btnEle = d.createElement('span');
+		btnEle.innerHTML = 'x';
+		btnEle.style.cssText = 'position:absolute;margin:-3px 5px;right:0;font-size:22px;cursor:pointer';
+		addEvent(btnEle,'click',closeBtnHandler);
+		return btnEle;
+	}
+
+	/**
      * Create SVG element
      * @param {int} width
      * @param {int} height
      * @returns {element} SVG element
      */
 	function createSVG(width, height) {
-		var el = document.createElementNS(xmlns, "svg");
+		var el = d.createElementNS(xmlns, "svg");
  
 		el.setAttribute("width", width);
 		el.setAttribute("height", height);
@@ -291,7 +305,7 @@
      * @returns {element} SVG Group element
      */
 	function createSVGGroup(transform) {		
-		var el = document.createElementNS(xmlns, "g");
+		var el = d.createElementNS(xmlns, "g");
  
 		el.setAttribute("transform", transform);
     
@@ -308,7 +322,7 @@
      * @returns {element} SVG Rect element
      */
 	function createSVGRect(x, y, width, height, style) {
-		var el = document.createElementNS(xmlns, "rect");
+		var el = d.createElementNS(xmlns, "rect");
  
 		el.setAttribute("x", x);
 		el.setAttribute("y", y);
@@ -329,7 +343,7 @@
      * @returns {element} SVG Line element
      */
 	function createSVGLine(x1, y1, x2, y2, style) {
-		var el = document.createElementNS(xmlns, "line");
+		var el = d.createElementNS(xmlns, "line");
 
 		el.setAttribute("x1", x1);
 		el.setAttribute("y1", y1);
@@ -352,7 +366,7 @@
      * @returns {element} SVG Text element
      */
 	function createSVGText(x, y, dx, dy, style, anchor, text) {
-		var el = document.createElementNS(xmlns, "text");
+		var el = d.createElementNS(xmlns, "text");
 
 		el.setAttribute("x", x);
 		el.setAttribute("y", y);
@@ -361,16 +375,43 @@
 		el.setAttribute("style", style);
 		el.setAttribute("text-anchor", anchor);
 
-		el.appendChild(document.createTextNode(text));
+		el.appendChild(d.createTextNode(text));
 
   		return el;
 	}
 
+	/**
+     * Event Handler for Close Button
+     */
+	function closeBtnHandler(e){
+		var elem = d.getElementById("waterfall-div");
+		if(elem){
+			elem.parentNode.removeChild(elem);
+		}
+	}
+
+	/**
+     * Add Events On DOM Elements
+     * @param {element} elem
+     * @param {event} event
+     * @param {function} fn
+     * return {EventListener} listener that fires event
+     */
+	function addEvent(elem, event, fn) {
+	    if (elem.addEventListener) {
+	        elem.addEventListener(event, fn, false);
+	    } else {
+	        elem.attachEvent("on" + event, function() {
+	            return(fn.call(elem, w.event));   
+	        });
+	    }
+	}
+
 	// Check for Navigation Timing and Resource Timing APIs
 
-	if(window.performance !== undefined && 
-	  (window.performance.getEntriesByType !== undefined || 
-	   window.performance.webkitGetEntriesByType !== undefined)) {
+	if(w.performance !== undefined && 
+	  (w.performance.getEntriesByType !== undefined || 
+	   w.performance.webkitGetEntriesByType !== undefined)) {
 
 		var timings = getTimings();
 
@@ -379,4 +420,4 @@
 	else {
 		alert("Resource Timing API not supported");
 	}
-})();
+})(window,window.document);

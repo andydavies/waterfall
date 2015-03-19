@@ -28,7 +28,7 @@ IE 10, Chromium Nightly
 - Add row number?
 - Add legend
 - Cleanup and refactor drawing code
-- Add Close button
+- ~~Add Close button~~
 - Add Jdrop / HAR Storage links
 - Flexible width?
 
