@@ -216,6 +216,16 @@
 
 		var bar = createSVGGroup("translate(" + barOffset + ", 0)");
 
+		// add tooltip
+		var title = document.createElementNS(xmlns,"title")
+		title.textContent = JSON.stringify(entry, function(key, value){
+		if (typeof value == "object") return value;
+			// keep tooltip to just non-zero durations.
+			if (!key.endsWith('Start') && key != 'url' && value != 0)
+				return value.toFixed(1);
+		}, '  ');
+		bar.appendChild(title);
+
 		bar.appendChild(createSVGRect(entry.start / scaleFactor, 0, entry.duration / scaleFactor, rowHeight, "fill:" + barColors.blocked));
 
 // TODO: Test for 3rd party and colour appropriately
