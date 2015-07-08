@@ -45,7 +45,7 @@ Here are the issues and queries found so far with the browser implementations of
 
 ##Chromium
 
-Some of these issues are already marked as fixed on [crbug.com](http://crbug.com/) but waterfall code hasn't been tested against a new nightly build.
+All of these issues are already marked as fixed on [crbug.com](http://crbug.com/) but waterfall code hasn't been tested against a recent build.
 
 - [Unexpected connectStart and connectEnd values for connections that are currently open](http://code.google.com/p/chromium/issues/detail?id=165897)
 - [Entries include dataURIs](http://code.google.com/p/chromium/issues/detail?id=165963&)
