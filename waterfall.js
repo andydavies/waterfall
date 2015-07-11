@@ -1,7 +1,7 @@
 /*
  * Uses Resource Timing API to build a page load waterfall
  *
- * Only currently works in IE10, and Chromium nightly builds, has a few issues still to be fixed, 
+ * Only currently works in IE10, and Chromium nightly builds, has a few issues still to be fixed,
  * contributions welcomed!
  *
  * Feel free to do what you want with it, @andydavies
@@ -34,20 +34,20 @@
 	function getTimings() {
 
 		var entries = [];
-	
+
 		// Page times come from Navigation Timing API
 	  	entries.push(createEntryFromNavigationTiming());
 
 		// Other entries come from Resource Timing API
 		var resources = [];
-		
+
 		if(w.performance.getEntriesByType !== undefined) {
 			resources = w.performance.getEntriesByType("resource");
 		}
 		else if(w.performance.webkitGetEntriesByType !== undefined) {
 			resources = w.performance.webkitGetEntriesByType("resource");
 		}
-		
+
 // TODO: .length - 1 is a really hacky way of removing the bookmarklet script
 // Do it by name???
 		for(var n = 0; n < resources.length - 1; n++) {
@@ -58,7 +58,7 @@
 	}
 
 	/**
-     * Creates an entry from a PerformanceResourceTiming object 
+     * Creates an entry from a PerformanceResourceTiming object
      * @param {object} resource
      * @returns {object}
      */
@@ -90,7 +90,7 @@
 	}
 
 	/**
-     * Creates an entry from a PerformanceResourceTiming object 
+     * Creates an entry from a PerformanceResourceTiming object
      * @param {object} resource
      * @returns {object}
 	 */
@@ -129,7 +129,7 @@
      * @param {object[]} entries
      */
 	function drawWaterfall(entries) {
-	
+
 		var maxTime = 0;
 		for(var n = 0; n < entries.length; n++) {
 			maxTime = Math.max(maxTime, entries[n].start + entries[n].duration);
@@ -178,12 +178,12 @@
 			svg.appendChild(createSVGText(x1, 0, 0, rowHeight, "font: 10px sans-serif;", "middle", n));
 			svg.appendChild(createSVGLine(x1, y1, x1, y2, "stroke: #ccc;"));
 			x1 += interval;
-		} 
+		}
 
 		// draw resource entries
 		for(var n = 0; n < entries.length; n++) {
 
-			var entry = entries[n]; 
+			var entry = entries[n];
 
 			var row = createSVGGroup("translate(0," + (n + 1) * (rowHeight + rowPadding) + ")");
 
@@ -203,10 +203,10 @@
 // drawRow()
 
 	/**
-     * Draw bar for resource 
+     * Draw bar for resource
      * @param {object} entry Details of URL, and timings for individual resource
      * @param {int} barOffset Offset of the start of the bar along  x axis
-     * @param {int} rowHeight 
+     * @param {int} rowHeight
      * @param {double} scaleFactor Factor used to scale down chart elements
      * @returns {element} SVG Group element containing bar
      *
@@ -215,6 +215,16 @@
 	function drawBar(entry, barOffset, rowHeight, scaleFactor) {
 
 		var bar = createSVGGroup("translate(" + barOffset + ", 0)");
+
+		// add tooltip
+		var title = document.createElementNS(xmlns,"title")
+		title.textContent = JSON.stringify(entry, function(key, value){
+		if (typeof value == "object") return value;
+			// keep tooltip to just non-zero durations.
+			if (!key.endsWith('Start') && key != 'url' && value != 0)
+				return value.toFixed(1);
+		}, '  ');
+		bar.appendChild(title);
 
 		bar.appendChild(createSVGRect(entry.start / scaleFactor, 0, entry.duration / scaleFactor, rowHeight, "fill:" + barColors.blocked));
 
@@ -292,10 +302,10 @@
      */
 	function createSVG(width, height) {
 		var el = d.createElementNS(xmlns, "svg");
- 
+
 		el.setAttribute("width", width);
 		el.setAttribute("height", height);
-    
+
 		return el;
 	}
 
@@ -304,11 +314,11 @@
      * @param {string} transform SVG tranformation to apply to group element
      * @returns {element} SVG Group element
      */
-	function createSVGGroup(transform) {		
+	function createSVGGroup(transform) {
 		var el = d.createElementNS(xmlns, "g");
- 
+
 		el.setAttribute("transform", transform);
-    
+
 		return el;
 	}
 
@@ -323,7 +333,7 @@
      */
 	function createSVGRect(x, y, width, height, style) {
 		var el = d.createElementNS(xmlns, "rect");
- 
+
 		el.setAttribute("x", x);
 		el.setAttribute("y", y);
 		el.setAttribute("width", width);
@@ -402,15 +412,15 @@
 	        elem.addEventListener(event, fn, false);
 	    } else {
 	        elem.attachEvent("on" + event, function() {
-	            return(fn.call(elem, w.event));   
+	            return(fn.call(elem, w.event));
 	        });
 	    }
 	}
 
 	// Check for Navigation Timing and Resource Timing APIs
 
-	if(w.performance !== undefined && 
-	  (w.performance.getEntriesByType !== undefined || 
+	if(w.performance !== undefined &&
+	  (w.performance.getEntriesByType !== undefined ||
 	   w.performance.webkitGetEntriesByType !== undefined)) {
 
 		var timings = getTimings();
