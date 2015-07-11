@@ -48,10 +48,10 @@
 			resources = w.performance.webkitGetEntriesByType("resource");
 		}
 
-// TODO: .length - 1 is a really hacky way of removing the bookmarklet script
-// Do it by name???
-		for(var n = 0; n < resources.length - 1; n++) {
-			entries.push(createEntryFromResourceTiming(resources[n]));
+		for(var n = 0; n < resources.length; n++) {
+			if(resources[n].name.indexOf('/waterfall.js') === -1){
+				entries.push(createEntryFromResourceTiming(resources[n]));
+			}
 		}
 
 		return entries;
@@ -66,7 +66,7 @@
 
 		var timing = w.performance.timing;
 
-// TODO: Add fetchStart and duration, fix TCP, SSL etc. timings
+// TODO: Add fetchStart and duration, fix TCP timings
 
 		return {
 			url: d.URL,
@@ -79,9 +79,9 @@
 			dnsStart: timing.domainLookupStart - timing.navigationStart,
 			dnsDuration: timing.domainLookupEnd - timing.domainLookupStart,
 			tcpStart: timing.connectStart - timing.navigationStart,
-			tcpDuration: timing.connectEnd - timing.connectStart,		// TODO
-			sslStart: 0,												// TODO
-			sslDuration: 0,												// TODO
+			tcpDuration: (timing.secureConnectionStart > 0 ? timing.secureConnectionStart : timing.connectEnd) - timing.connectStart,
+			sslStart: timing.secureConnectionStart > 0 ? timing.secureConnectionStart - timing.navigationStart : 0,
+			sslDuration: timing.secureConnectionStart > 0 ? timing.connectEnd - timing.secureConnectionStart : 0,
 			requestStart: timing.requestStart - timing.navigationStart,
 			requestDuration: timing.responseStart - timing.requestStart,
 			responseStart: timing.responseStart - timing.navigationStart,
@@ -96,11 +96,10 @@
 	 */
 	function createEntryFromResourceTiming(resource) {
 
-// TODO: Add fetchStart and duration, fix TCP, SSL timings
+// TODO: Add fetchStart and duration, fix TCP timings
 // NB
 // AppCache: start = fetchStart, end = domainLookupStart, connectStart or requestStart
 // TCP: start = connectStart, end = secureConnectionStart or connectEnd
-// SSL: secureConnectionStart can be undefined
 
 		return {
 			url: resource.name,
@@ -113,9 +112,9 @@
 			dnsStart: resource.domainLookupStart,
 			dnsDuration: resource.domainLookupEnd - resource.domainLookupStart,
 			tcpStart: resource.connectStart,
-			tcpDuration: resource.connectEnd - resource.connectStart, 	// TODO
-			sslStart: 0,												// TODO
-			sslDuration: 0,												// TODO
+			tcpDuration: (resource.secureConnectionStart > 0 ? resource.secureConnectionStart : resource.connectEnd) - resource.connectStart,
+			sslStart: resource.secureConnectionStart > 0 ? resource.secureConnectionStart : 0,
+			sslDuration: resource.secureConnectionStart > 0 ? resource.connectEnd - resource.secureConnectionStart : 0,
 			requestStart: resource.requestStart,
 			requestDuration: resource.responseStart - resource.requestStart,
 			responseStart: resource.responseStart,
@@ -144,7 +143,7 @@
 			container.id = containerID;
 		}
 
-		container.style.cssText = 'background:#fff;border: 2px solid #000;margin:5px;position:absolute;top:0px;left:0px;z-index:99999;margin:0px;padding:0px;';
+		container.style.cssText = 'background:#fff;border: 2px solid #000;position:absolute;top:0;left:0;right:0;z-index:99999;margin:0px 8px;padding:0px;';
 		container.appendChild(closeBtn);
 		d.body.appendChild(container);
 
@@ -155,7 +154,7 @@
 		//calculate size of chart
 		// - max time
 		// - number of entries
-		var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+		var width = (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) - 16;
 		var height = (entries.length + 1) * (rowHeight + rowPadding); // +1 for axis
 
 		container.width = width;

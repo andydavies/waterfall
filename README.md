@@ -17,7 +17,7 @@ IE 10, Chromium Nightly
 #To Do
 
 - Add DOM event markers e.g. onload etc.
-- Add AppCache, SSL times, fix TCP times
+- Add AppCache, fix TCP times
 - ~~Truncate URL display~~
 - Remove protocol from URL display
 - Fix blocked timings
@@ -30,7 +30,7 @@ IE 10, Chromium Nightly
 - Cleanup and refactor drawing code
 - ~~Add Close button~~
 - Add Jdrop / HAR Storage links
-- Flexible width?
+- ~~Flexible width~~
 
 #To check
 
