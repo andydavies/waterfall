@@ -1,4 +1,4 @@
-#Waterfall
+# Waterfall
 
 A bookmarklet to create page load waterfall in the browser using the Resource Timing API
 
@@ -8,13 +8,13 @@ Just add the bookmarklet below to your bookmarks bar.
 javascript:(function(){var el=document.createElement('script');el.type='text/javascript';el.src='//andydavies.github.io/waterfall/bookmarklet/waterfall.js';document.getElementsByTagName('body')[0].appendChild(el);})();
 ```
 
-#Works In*
+# Works In*
 
 IE 10, Chromium Nightly
 
 *When I say 'works in' I mean you'll get a waterfall but sometimes there will be odd things about it!
 
-#To Do
+# To Do
 
 - Add DOM event markers e.g. onload etc.
 - Add AppCache, fix TCP times
@@ -32,18 +32,18 @@ IE 10, Chromium Nightly
 - Add Jdrop / HAR Storage links
 - ~~Flexible width~~
 
-#To check
+# To check
 
 - Why is the API sometimes unavailable in IE10?
 - "about:blank" in IE10 on http://t.uk.msn.com/ - valid
 
-#Browser Issues
+# Browser Issues
 
 Here are the issues and queries found so far with the browser implementations of Resource Timing - no CORS testing so far.
 
 (Convert these to GH issues???)
 
-##Chromium
+## Chromium
 
 All of these issues are already marked as fixed on [crbug.com](http://crbug.com/) but waterfall code hasn't been tested against a recent build.
 
@@ -53,7 +53,7 @@ All of these issues are already marked as fixed on [crbug.com](http://crbug.com/
 - [List of entries excludes resources retrieved from cache](http://code.google.com/p/chromium/issues/detail?id=166404)
 - [fetchStart times always equal startTime](http://code.google.com/p/chromium/issues/detail?id=166710)
 
-##IE10
+## IE10
 
 (no link to issue tracker for these)
 
@@ -62,6 +62,6 @@ All of these issues are already marked as fixed on [crbug.com](http://crbug.com/
 - Frequently domainLookupStart == domainLookupEnd even for domains the Windows VM has never seen previously.
 - responseStart == responseEnd in Navigation Timing for both first and repeat views even when waterfall in dev tools shows a response
 
-##Change Log
+## Change Log
 
 2013-01-01 Add JSDoc comments, start re-factoring drawing code
